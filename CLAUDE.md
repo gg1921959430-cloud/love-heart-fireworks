@@ -100,6 +100,47 @@ heartPath.setAttribute('fill', 'url(#gradN)')
   → 所有粒子消失后停止 requestAnimationFrame
 ```
 
+## 版本与推送规范
+
+### 版本号规则
+
+- 格式：`v主版本.次版本.修订号`（如 `v1.0.0`）
+- 修订号采用**十进制递增**：`v1.0.0` → `v1.0.1` → … → `v1.0.9` → `v1.1.0`（满十进一）
+- 每次推送到远程仓库前，必须递增版本号（通常是修订号 +1）
+
+### 推送流程
+
+每次用户说"推送"或将当前版本推送到远程仓库时，执行以下步骤：
+
+```
+1. 查看当前最新的 tag：git tag --sort=-v:refname | head -1
+2. 递增版本号（修订号 +1，满十向次版本号进位）
+3. git add <变更文件>
+4. git commit -m "v<新版本号>: <一句话描述改动或新增内容>"
+5. git tag -a v<新版本号> -m "<详细说明改动或新增了什么>"
+6. git push -u origin master --tags
+```
+
+### 示例
+
+```
+当前最新 tag: v1.0.0
+用户说"推送" → 新版本号: v1.0.1
+
+git add index.html
+git commit -m "v1.0.1: 修复烟花粒子闪烁问题"
+git tag -a v1.0.1 -m "修复：烟花粒子在低帧率下闪烁，优化了渲染时序"
+git push -u origin master --tags
+```
+
+### 远程仓库
+
+- **地址**：`git@github.com:gg1921959430-cloud/love-heart-fireworks.git`
+- **连接方式**：SSH
+- **当前版本**：v1.0.0
+
+---
+
 ## 注意事项
 
 - 修改爱心形状时，需要同时改 `generateHeartPath`（SVG 生成）和 `heartPoint`/`heartNormal`（烟花用），保持公式一致
