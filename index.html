@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>跳动爱心 - Love</title>
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+<style>
+  /* ============================================================
+     全局与背景
+     ============================================================ */
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(45deg, #fce4ec, #f3e5f5, #e3f2fd);
+    font-family: 'Dancing Script', cursive;
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  /* ---- 梦幻光斑 ---- */
+  .bg-glow {
+    position: fixed;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+    animation: glowFloat 8s ease-in-out infinite;
+  }
+  .glow-1 {
+    width: 320px; height: 320px;
+    top: -120px; right: -80px;
+    background: radial-gradient(circle, rgba(255,182,193,0.45), transparent);
+    filter: blur(70px);
+    animation-delay: 0s;
+  }
+  .glow-2 {
+    width: 260px; height: 260px;
+    bottom: -100px; left: -70px;
+    background: radial-gradient(circle, rgba(216,180,254,0.40), transparent);
+    filter: blur(65px);
+    animation-delay: -3s;
+  }
+  .glow-3 {
+    width: 220px; height: 220px;
+    top: 45%; left: 65%;
+    background: radial-gradient(circle, rgba(173,216,230,0.35), transparent);
+    filter: blur(60px);
+    animation-delay: -5s;
+  }
+  .glow-4 {
+    width: 180px; height: 180px;
+    top: 15%; left: 10%;
+    background: radial-gradient(circle, rgba(255,218,185,0.35), transparent);
+    filter: blur(55px);
+    animation-delay: -2s;
+  }
+
+  @keyframes glowFloat {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    25%  { transform: translate(15px, -10px) scale(1.08); }
+    50%  { transform: translate(-8px, 12px) scale(0.94); }
+    75%  { transform: translate(-12px, -6px) scale(1.05); }
+  }
+
+  /* ============================================================
+     主内容区
+     ============================================================ */
+  .content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 36px;
+    z-index: 1;
+    position: relative;
+  }
+
+  /* ============================================================
+     爱心组件
+     ============================================================ */
+  .heart-wrapper {
+    animation: heartbeat 0.83s ease-in-out infinite;
+    transform-origin: center center;
+    will-change: transform;
+  }
+
+  .heart-wrapper svg {
+    width: 300px;
+    height: auto;
+    display: block;
+    filter: drop-shadow(0 0 28px rgba(255, 90, 120, 0.5))
+            drop-shadow(0 0 55px rgba(255, 130, 160, 0.25));
+    transition: filter 0.5s ease;
+  }
+
+  @keyframes heartbeat {
+    0%   { transform: scale(1); }
+    14%  { transform: scale(1.15); }
+    28%  { transform: scale(1); }
+    42%  { transform: scale(1.10); }
+    56%  { transform: scale(1); }
+    100% { transform: scale(1); }
+  }
+
+  /* ============================================================
+     Love 按钮
+     ============================================================ */
+  .btn-love {
+    display: inline-block;
+    padding: 14px 52px;
+    border: none;
+    border-radius: 50px;
+    background: linear-gradient(135deg, #ff6b81, #a855f7);
+    color: #fff;
+    font-family: 'Dancing Script', cursive;
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    box-shadow: 0 4px 20px rgba(255, 107, 129, 0.45),
+                0 0 0 0 rgba(168, 85, 247, 0.5);
+  }
+
+  .btn-love:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px rgba(168, 85, 247, 0.55),
+                0 0 0 8px rgba(168, 85, 247, 0.12);
+  }
+
+  .btn-love:active {
+    transform: scale(0.88);
+    transition: transform 0.12s ease;
+  }
+
+  /* 点击瞬态反馈 */
+  .btn-love.pop {
+    animation: btnPop 0.35s ease;
+  }
+  @keyframes btnPop {
+    0%   { transform: scale(0.88); }
+    40%  { transform: scale(1.06); }
+    100% { transform: scale(1); }
+  }
+
+  /* ============================================================
+     烟花画布
+     ============================================================ */
+  #firework-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 10;
+  }
+</style>
+</head>
+<body>
+
+  <!-- 背景光斑 -->
+  <div class="bg-glow glow-1"></div>
+  <div class="bg-glow glow-2"></div>
+  <div class="bg-glow glow-3"></div>
+  <div class="bg-glow glow-4"></div>
+
+  <!-- 主内容 -->
+  <main class="content">
+    <!-- 爱心 -->
+    <div class="heart-wrapper" id="heartWrapper">
+      <svg viewBox="0 0 400 460" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="grad1" cx="50%" cy="35%" r="62%">
+            <stop offset="0%"   stop-color="#ff2d55" />
+            <stop offset="100%" stop-color="#ff6b81" />
+          </radialGradient>
+          <radialGradient id="grad2" cx="50%" cy="35%" r="62%">
+            <stop offset="0%"   stop-color="#ff6348" />
+            <stop offset="100%" stop-color="#ff9f7f" />
+          </radialGradient>
+          <radialGradient id="grad3" cx="50%" cy="35%" r="62%">
+            <stop offset="0%"   stop-color="#a855f7" />
+            <stop offset="100%" stop-color="#d8b4fe" />
+          </radialGradient>
+          <radialGradient id="grad4" cx="50%" cy="35%" r="62%">
+            <stop offset="0%"   stop-color="#ec4899" />
+            <stop offset="100%" stop-color="#f9a8d4" />
+          </radialGradient>
+          <radialGradient id="grad5" cx="50%" cy="35%" r="62%">
+            <stop offset="0%"   stop-color="#f97316" />
+            <stop offset="100%" stop-color="#fbbf24" />
+          </radialGradient>
+          <radialGradient id="grad6" cx="50%" cy="35%" r="62%">
+            <stop offset="0%"   stop-color="#06b6d4" />
+            <stop offset="100%" stop-color="#67e8f9" />
+          </radialGradient>
+          <radialGradient id="grad7" cx="50%" cy="35%" r="62%">
+            <stop offset="0%"   stop-color="#8b5cf6" />
+            <stop offset="100%" stop-color="#c4b5fd" />
+          </radialGradient>
+        </defs>
+        <path id="heartPath" fill="url(#grad1)" />
+      </svg>
+    </div>
+
+    <!-- Love 按钮 -->
+    <button class="btn-love" id="btnLove">Love</button>
+  </main>
+
+  <!-- 烟花画布 -->
+  <canvas id="firework-canvas"></canvas>
+
+<script>
+// ============================================================
+// 一、爱心系统
+// ============================================================
+
+/**
+ * 心形曲线参数方程
+ * x(t) = 16·sin³(t)
+ * y(t) = 13·cos(t) - 5·cos(2t) - 2·cos(3t) - cos(4t)
+ *
+ * 生成 SVG path 的 d 属性
+ */
+function generateHeartPath(cx, cy, scale) {
+  const steps = 360;
+  const pts = [];
+  for (let i = 0; i <= steps; i++) {
+    const t = (i / steps) * Math.PI * 2;
+    const sinT = Math.sin(t);
+    const x = 16 * sinT * sinT * sinT;
+    const y = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
+    pts.push(`${(cx + x * scale).toFixed(2)},${(cy + y * scale).toFixed(2)}`);
+  }
+  return 'M ' + pts.join(' L ') + ' Z';
+}
+
+// 初始化爱心路径
+const heartPath = document.getElementById('heartPath');
+const heartWrapper = document.getElementById('heartWrapper');
+heartPath.setAttribute('d', generateHeartPath(200, 230, 9));
+
+// ---- 配色切换：监听心跳动画循环 ----
+let currentGradient = 1;
+const TOTAL_GRADIENTS = 7;
+
+// 渐变对应的发光色（用于动态调整 drop-shadow）
+const GLOW_COLORS = [
+  'rgba(255, 45, 85, 0.5)',   // 玫红
+  'rgba(255, 99, 71, 0.5)',   // 珊瑚
+  'rgba(168, 85, 247, 0.5)',  // 紫罗兰
+  'rgba(236, 72, 153, 0.5)',  // 樱花粉
+  'rgba(249, 115, 22, 0.5)',  // 蜜桃
+  'rgba(6, 182, 212, 0.5)',   // 海蓝
+  'rgba(139, 92, 246, 0.5)',  // 薰衣草
+];
+
+heartWrapper.addEventListener('animationiteration', () => {
+  currentGradient = (currentGradient % TOTAL_GRADIENTS) + 1;
+  heartPath.setAttribute('fill', `url(#grad${currentGradient})`);
+
+  // 同步更新发光颜色
+  const glowColor = GLOW_COLORS[currentGradient - 1];
+  const svgEl = heartWrapper.querySelector('svg');
+  svgEl.style.filter =
+    `drop-shadow(0 0 28px ${glowColor}) drop-shadow(0 0 55px ${glowColor.replace('0.5', '0.25')})`;
+});
+
+
+// ============================================================
+// 二、烟花粒子系统
+// ============================================================
+
+const canvas = document.getElementById('firework-canvas');
+const ctx = canvas.getContext('2d');
+
+// ---- 画布自适应 ----
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+// ---- 获取爱心中心坐标（视口坐标） ----
+function getHeartCenter() {
+  const rect = heartPath.getBoundingClientRect();
+  return {
+    x: rect.left + rect.width / 2,
+    y: rect.top + rect.height / 2,
+  };
+}
+
+// ---- 粒子对象池 ----
+const MAX_POOL = 6000;
+const MAX_ACTIVE = 2500;
+const particlePool = [];
+const activeParticles = [];
+let animFrameId = null;
+
+function getParticle() {
+  return particlePool.length > 0 ? particlePool.pop() : {};
+}
+
+function releaseParticle(p) {
+  // 清理引用
+  p.trail = undefined;
+  p.lastX = undefined;
+  p.lastY = undefined;
+  if (particlePool.length < MAX_POOL) {
+    particlePool.push(p);
+  }
+}
+
+// ---- 烟花颜色板 ----
+const FIREWORK_COLORS = [
+  '#ff2d55', '#ff6b81', '#ff3b30', '#ff9500', '#ffcc02',
+  '#ff375f', '#ff9f0a', '#ff6482', '#ff453a', '#ffd60a',
+  '#30d158', '#5ac8fa', '#64d2ff', '#bf5af2', '#ff69b4',
+  '#00d4aa', '#ff7b9c', '#ffe259', '#a18cd1', '#fbc2eb',
+];
+
+// ---- 心形曲线辅助函数（烟花用） ----
+function heartPoint(t, scale) {
+  const sinT = Math.sin(t);
+  const x = 16 * sinT * sinT * sinT * scale;
+  const y = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t)) * scale;
+  return { x, y };
+}
+
+function heartNormal(t, scale) {
+  const dt = 0.005;
+  const p1 = heartPoint(t - dt, scale);
+  const p2 = heartPoint(t + dt, scale);
+  const dx = p2.x - p1.x;
+  const dy = p2.y - p1.y;
+  const len = Math.sqrt(dx * dx + dy * dy) || 1;
+  return { x: -dy / len, y: dx / len };
+}
+
+function rand(min, max) {
+  return min + Math.random() * (max - min);
+}
+
+function randInt(min, max) {
+  return Math.floor(rand(min, max + 1));
+}
+
+function pickRandom(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+
+// ============================================================
+// 三、6 种烟花样式实现
+// ============================================================
+
+// ---- 样式 1：球形绽放 ----
+function burstSphere(cx, cy) {
+  const count = randInt(80, 150);
+  for (let i = 0; i < count; i++) {
+    if (activeParticles.length >= MAX_ACTIVE) break;
+    const angle = rand(0, Math.PI * 2);
+    const speed = rand(2.5, 8);
+    const p = getParticle();
+    p.x = cx;
+    p.y = cy;
+    p.vx = Math.cos(angle) * speed;
+    p.vy = Math.sin(angle) * speed;
+    p.size = rand(1.8, 3.5);
+    p.color = pickRandom(FIREWORK_COLORS);
+    p.alpha = 1;
+    p.alphaDecay = rand(0.007, 0.022);
+    p.gravity = 0.04;
+    activeParticles.push(p);
+  }
+}
+
+// ---- 样式 2：心形绽放 ----
+function burstHeart(cx, cy) {
+  const count = randInt(100, 150);
+  const hs = 5; // 初始心形尺寸
+  for (let i = 0; i < count; i++) {
+    if (activeParticles.length >= MAX_ACTIVE) break;
+    const t = rand(0, Math.PI * 2);
+    const hp = heartPoint(t, hs);
+    const hn = heartNormal(t, hs);
+    const speed = rand(1.5, 5);
+    const p = getParticle();
+    p.x = cx + hp.x;
+    p.y = cy + hp.y;
+    p.vx = hn.x * speed + rand(-0.3, 0.3);
+    p.vy = hn.y * speed + rand(-0.3, 0.3);
+    p.size = rand(1.5, 3);
+    p.color = pickRandom(FIREWORK_COLORS);
+    p.alpha = 1;
+    p.alphaDecay = rand(0.006, 0.018);
+    p.gravity = 0.03;
+    activeParticles.push(p);
+  }
+}
+
+// ---- 样式 3：螺旋飞散 ----
+function burstSpiral(cx, cy) {
+  const count = randInt(80, 140);
+  const arms = randInt(3, 6);
+  for (let i = 0; i < count; i++) {
+    if (activeParticles.length >= MAX_ACTIVE) break;
+    const baseAngle = rand(0, Math.PI * 2);
+    const speed = rand(3, 9);
+    const spinDir = Math.random() < 0.5 ? -1 : 1;
+    const angVel = spinDir * rand(0.03, 0.09);
+    const p = getParticle();
+    p.x = cx;
+    p.y = cy;
+    p.vx = Math.cos(baseAngle) * speed;
+    p.vy = Math.sin(baseAngle) * speed;
+    p.angle = baseAngle;
+    p.angularVel = angVel;
+    p.speed = speed;
+    p.size = rand(1.8, 3.2);
+    p.color = pickRandom(FIREWORK_COLORS);
+    p.alpha = 1;
+    p.alphaDecay = rand(0.005, 0.015);
+    p.gravity = 0.025;
+    activeParticles.push(p);
+  }
+}
+
+// ---- 样式 4：星形爆裂 ----
+function burstStar(cx, cy) {
+  const count = randInt(80, 120);
+  const points = 5;
+  for (let i = 0; i < count; i++) {
+    if (activeParticles.length >= MAX_ACTIVE) break;
+    const baseAngle = ((i % points) / points) * Math.PI * 2 + rand(-0.12, 0.12);
+    const speed = rand(5, 12);
+    const p = getParticle();
+    p.x = cx;
+    p.y = cy;
+    p.vx = Math.cos(baseAngle) * speed;
+    p.vy = Math.sin(baseAngle) * speed;
+    p.lastX = cx;
+    p.lastY = cy;
+    p.size = rand(1.5, 2.8);
+    p.color = pickRandom(FIREWORK_COLORS);
+    p.alpha = 1;
+    p.alphaDecay = rand(0.01, 0.025);
+    p.gravity = 0.055;
+    activeParticles.push(p);
+  }
+}
+
+// ---- 样式 5：双层花环 ----
+function burstDoubleRing(cx, cy) {
+  const count = randInt(100, 140);
+  const innerCount = Math.floor(count * 0.45);
+  const innerColors = ['#ff6b81', '#ff9500', '#ff2d55', '#ffd60a'];
+  const outerColors = ['#5ac8fa', '#a855f7', '#06b6d4', '#bf5af2', '#64d2ff'];
+
+  for (let i = 0; i < count; i++) {
+    if (activeParticles.length >= MAX_ACTIVE) break;
+    const isInner = i < innerCount;
+    const angle = rand(0, Math.PI * 2);
+    const speed = isInner ? rand(2.5, 5) : rand(4.5, 8);
+    const p = getParticle();
+    p.x = cx;
+    p.y = cy;
+    p.vx = Math.cos(angle) * speed;
+    p.vy = Math.sin(angle) * speed;
+    p.size = isInner ? rand(1.8, 3) : rand(2, 3.5);
+    p.color = pickRandom(isInner ? innerColors : outerColors);
+    p.alpha = 1;
+    p.alphaDecay = rand(0.007, 0.02);
+    p.gravity = 0.035;
+    activeParticles.push(p);
+  }
+}
+
+// ---- 样式 6：流星雨 ----
+function burstShootingStars(cx, cy) {
+  const count = randInt(22, 40);
+  for (let i = 0; i < count; i++) {
+    if (activeParticles.length >= MAX_ACTIVE) break;
+    const sx = cx + rand(-100, 100);
+    const sy = cy + rand(-150, -40);
+    const p = getParticle();
+    p.x = sx;
+    p.y = sy;
+    p.vx = rand(-2.5, 2.5);
+    p.vy = rand(-10, -4);  // 向上抛射
+    p.size = rand(2.5, 5);
+    p.color = pickRandom(['#ffe259', '#ffd60a', '#ffcc02', '#ff9f0a', '#ffffff', '#ffeaa7']);
+    p.alpha = 1;
+    p.alphaDecay = rand(0.004, 0.012);
+    p.gravity = rand(0.07, 0.18);
+    p.trail = [];
+    p.maxTrail = randInt(8, 16);
+    activeParticles.push(p);
+  }
+}
+
+// 样式函数表
+const STYLE_FUNCTIONS = [
+  burstSphere,
+  burstHeart,
+  burstSpiral,
+  burstStar,
+  burstDoubleRing,
+  burstShootingStars,
+];
+
+
+// ============================================================
+// 四、渲染循环
+// ============================================================
+
+function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  let hasActive = false;
+
+  for (let i = activeParticles.length - 1; i >= 0; i--) {
+    const p = activeParticles[i];
+
+    // ---- 物理更新 ----
+    if (p.angularVel !== undefined) {
+      // 螺旋模式：旋转速度方向
+      p.angle += p.angularVel;
+      p.vx = Math.cos(p.angle) * (p.speed || 5);
+      p.vy = Math.sin(p.angle) * (p.speed || 5);
+    }
+
+    // 保存上一帧位置（尾迹用）
+    if (p.lastX !== undefined) {
+      p.lastX = p.x;
+      p.lastY = p.y;
+    }
+
+    p.x += p.vx;
+    p.y += p.vy;
+    p.vy += p.gravity || 0.04;
+    p.alpha -= p.alphaDecay || 0.01;
+
+    // 流星雨尾迹记录
+    if (p.trail) {
+      p.trail.push({ x: p.x, y: p.y, alpha: p.alpha });
+      if (p.trail.length > p.maxTrail) {
+        p.trail.shift();
+      }
+    }
+
+    // ---- 回收判定 ----
+    if (p.alpha <= 0) {
+      releaseParticle(p);
+      activeParticles.splice(i, 1);
+      continue;
+    }
+
+    // ---- 绘制 ----
+    // 流星雨：绘制尾迹
+    if (p.trail && p.trail.length > 1) {
+      for (let j = 1; j < p.trail.length; j++) {
+        const tp = p.trail[j];
+        const tPrev = p.trail[j - 1];
+        const trailAlpha = tp.alpha * (j / p.trail.length) * 0.55;
+        if (trailAlpha <= 0.01) continue;
+        ctx.globalAlpha = trailAlpha;
+        ctx.strokeStyle = p.color;
+        ctx.lineWidth = p.size * (j / p.trail.length) * 0.7;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(tPrev.x, tPrev.y);
+        ctx.lineTo(tp.x, tp.y);
+        ctx.stroke();
+      }
+    }
+
+    // 星形爆裂：短尾迹
+    if (p.lastX !== undefined && p.lastY !== undefined) {
+      ctx.globalAlpha = p.alpha * 0.5;
+      ctx.strokeStyle = p.color;
+      ctx.lineWidth = p.size * 0.6;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(p.lastX, p.lastY);
+      ctx.lineTo(p.x, p.y);
+      ctx.stroke();
+    }
+
+    // 粒子主体
+    ctx.globalAlpha = p.alpha;
+    ctx.fillStyle = p.color;
+    ctx.shadowColor = p.color;
+    ctx.shadowBlur = p.size * 2;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.shadowBlur = 0; // 重置，避免影响后续绘制
+
+    hasActive = true;
+  }
+
+  ctx.globalAlpha = 1;
+
+  if (hasActive) {
+    animFrameId = requestAnimationFrame(animate);
+  } else {
+    animFrameId = null;
+  }
+}
+
+
+// ============================================================
+// 五、事件绑定
+// ============================================================
+
+const btnLove = document.getElementById('btnLove');
+
+btnLove.addEventListener('click', () => {
+  // 按钮瞬态弹跳反馈
+  btnLove.classList.remove('pop');
+  void btnLove.offsetWidth; // 强制回流，允许重复触发动画
+  btnLove.classList.add('pop');
+
+  // 获取爱心中心
+  const center = getHeartCenter();
+
+  // 随机选取烟花样式
+  const styleIndex = Math.floor(Math.random() * STYLE_FUNCTIONS.length);
+  STYLE_FUNCTIONS[styleIndex](center.x, center.y);
+
+  // 若渲染循环未运行则启动
+  if (!animFrameId && activeParticles.length > 0) {
+    animFrameId = requestAnimationFrame(animate);
+  }
+});
+
+
+// ============================================================
+// 六、初始化
+// ============================================================
+
+console.log('💖 爱心跳动 & 烟花绽放 — 已就绪');
+console.log('   - 7 种配色随心跳自动切换');
+console.log('   - 6 种烟花样式随机绽放');
+console.log('   - 点击 Love 按钮试试吧 ✨');
+</script>
+
+</body>
+</html>
