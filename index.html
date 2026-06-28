@@ -305,7 +305,25 @@ const activeParticles = [];
 let animFrameId = null;
 
 function getParticle() {
-  return particlePool.length > 0 ? particlePool.pop() : {};
+  if (particlePool.length > 0) {
+    const p = particlePool.pop();
+    // 彻底重置所有属性，防止样式间污染
+    p.x = p.y = p.vx = p.vy = 0;
+    p.size = 0;
+    p.color = '';
+    p.alpha = 0;
+    p.alphaDecay = 0;
+    p.gravity = 0;
+    p.angle = undefined;
+    p.angularVel = undefined;
+    p.speed = undefined;
+    p.trail = undefined;
+    p.lastX = undefined;
+    p.lastY = undefined;
+    p.maxTrail = undefined;
+    return p;
+  }
+  return {};
 }
 
 function releaseParticle(p) {
